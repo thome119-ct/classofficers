@@ -1,0 +1,173 @@
+<!-- =========================
+檔名：index.html
+簡約版首頁｜班級幹部登錄系統
+========================= -->
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>班級幹部登錄系統</title>
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:"Microsoft JhengHei",sans-serif;
+    }
+
+    body{
+
+      background:#f1f5f9;
+
+      height:100vh;
+
+      display:flex;
+      justify-content:center;
+      align-items:center;
+
+      color:#1e293b;
+
+    }
+
+    .card{
+
+      width:90%;
+      max-width:520px;
+
+      background:#ffffff;
+
+      border-radius:20px;
+
+      padding:40px 30px;
+
+      text-align:center;
+
+      box-shadow:
+      0 10px 30px rgba(0,0,0,0.08);
+
+    }
+
+    .school{
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      gap:15px;
+
+      margin-bottom:30px;
+
+    }
+
+    .school img{
+
+      width:70px;
+      height:70px;
+
+      object-fit:contain;
+
+    }
+
+    .school-text h2{
+
+      font-size:24px;
+      margin-bottom:6px;
+
+    }
+
+    .school-text p{
+
+      color:#64748b;
+      font-size:14px;
+
+    }
+
+    h1{
+
+      font-size:36px;
+      color:#2563eb;
+
+      margin-bottom:20px;
+
+    }
+
+    .desc{
+
+      color:#475569;
+
+      line-height:1.8;
+
+      margin-bottom:35px;
+
+    }
+
+    .btn{
+
+      display:inline-block;
+
+      background:#2563eb;
+      color:#fff;
+
+      text-decoration:none;
+
+      padding:14px 30px;
+
+      border-radius:12px;
+
+      font-size:18px;
+      font-weight:bold;
+
+      transition:0.2s;
+
+    }
+
+    .btn:hover{
+
+      background:#1d4ed8;
+
+      transform:translateY(-2px);
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="card">
+
+    <!-- 學校資訊 -->
+    <div class="school">
+
+      <div class="school-text">
+        <h2>彰化縣立彰泰國民中學</h2>
+        <p>Chang Tai Junior High School</p>
+      </div>
+
+    </div>
+
+    <!-- 系統標題 -->
+    <h1>班級幹部登錄系統</h1>
+
+    <div class="desc">
+      提供班級幹部資料登錄、<br>
+      Google 試算表同步管理功能。
+    </div>
+
+    <!-- 進入系統 -->
+    <a href="main.html" class="btn">
+      進入系統
+    </a>
+
+  </div>
+
+</body>
+</html>
