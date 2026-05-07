@@ -1,0 +1,752 @@
+<!-- =========================
+檔名：index.html
+班級幹部登錄系統（Google Sites + Google 試算表版）
+作者：ChatGPT
+========================= -->
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>班級幹部登錄系統</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:"Microsoft JhengHei", sans-serif;
+    }
+
+    body{
+      background:linear-gradient(135deg,#dbeafe,#f0f9ff);
+      min-height:100vh;
+      padding:30px;
+      color:#1e293b;
+    }
+
+    .container{
+      max-width:1200px;
+      margin:auto;
+    }
+
+    .title{
+      text-align:center;
+      margin-bottom:25px;
+    }
+
+    .title h1{
+      font-size:36px;
+      color:#0f172a;
+      margin-bottom:10px;
+    }
+
+    .title p{
+      color:#475569;
+    }
+
+    .card{
+      background:#fff;
+      border-radius:18px;
+      padding:24px;
+      margin-bottom:24px;
+      box-shadow:0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .section-title{
+      font-size:24px;
+      margin-bottom:20px;
+      color:#1d4ed8;
+      border-left:6px solid #2563eb;
+      padding-left:12px;
+    }
+
+    .row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:16px;
+      margin-bottom:18px;
+    }
+
+    .col{
+      flex:1;
+      min-width:220px;
+    }
+
+    label{
+      display:block;
+      margin-bottom:8px;
+      font-weight:bold;
+    }
+
+    input, select{
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid #cbd5e1;
+      font-size:16px;
+    }
+
+    button{
+      border:none;
+      padding:12px 20px;
+      border-radius:12px;
+      cursor:pointer;
+      font-size:16px;
+      font-weight:bold;
+      transition:0.2s;
+    }
+
+    button:hover{
+      transform:translateY(-2px);
+    }
+
+    .btn-primary{
+      background:#2563eb;
+      color:#fff;
+    }
+
+    .btn-success{
+      background:#16a34a;
+      color:#fff;
+    }
+
+    .btn-danger{
+      background:#dc2626;
+      color:#fff;
+    }
+
+    .btn-gray{
+      background:#64748b;
+      color:#fff;
+    }
+
+    .officer-row{
+      border:1px solid #e2e8f0;
+      border-radius:14px;
+      padding:18px;
+      margin-bottom:16px;
+      background:#f8fafc;
+    }
+
+    .officer-title{
+      font-size:18px;
+      font-weight:bold;
+      margin-bottom:14px;
+      color:#0f172a;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:15px;
+    }
+
+    table th, table td{
+      border:1px solid #cbd5e1;
+      padding:10px;
+      text-align:center;
+    }
+
+    table th{
+      background:#dbeafe;
+    }
+
+    .hidden{
+      display:none;
+    }
+
+    .admin-item{
+      display:flex;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .badge{
+      background:#2563eb;
+      color:#fff;
+      padding:5px 10px;
+      border-radius:20px;
+      font-size:13px;
+    }
+
+    .top-buttons{
+      display:flex;
+      gap:12px;
+      justify-content:flex-end;
+      margin-bottom:18px;
+      flex-wrap:wrap;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="title">
+    <h1>班級幹部登錄系統</h1>
+    <p>Google Sites + Google 試算表整合版</p>
+  </div>
+
+  <!-- 上方按鈕 -->
+  <div class="top-buttons">
+    <button class="btn-primary" onclick="showAdminLogin()">
+      管理者登入
+    </button>
+  </div>
+
+  <!-- 使用者介面 -->
+  <div class="card">
+
+    <div class="section-title">班級幹部填報</div>
+
+    <div class="row">
+      <div class="col">
+        <label>年級</label>
+        <select id="gradeSelect" onchange="renderClasses()">
+          <option value="">請選擇年級</option>
+        </select>
+      </div>
+
+      <div class="col">
+        <label>班級</label>
+        <select id="classSelect">
+          <option value="">請選擇班級</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="officerContainer"></div>
+
+    <div class="row">
+      <button class="btn-gray" onclick="previewData()">檢視</button>
+      <button class="btn-success" onclick="submitData()">完成</button>
+    </div>
+
+    <div id="previewArea"></div>
+
+  </div>
+
+  <!-- 管理者介面 -->
+  <div class="card hidden" id="adminPanel">
+
+    <div class="section-title">管理者設定</div>
+
+    <!-- 年級設定 -->
+    <h3 style="margin-bottom:12px;">年級與班級數設定</h3>
+
+    <div id="gradeConfig"></div>
+
+    <button class="btn-primary" onclick="addGradeConfig()">
+      新增年級
+    </button>
+
+    <hr style="margin:25px 0;">
+
+    <!-- 幹部設定 -->
+    <h3 style="margin-bottom:12px;">幹部類別設定</h3>
+
+    <div class="row">
+      <div class="col">
+        <input type="text" id="newOfficer" placeholder="輸入幹部名稱">
+      </div>
+
+      <div class="col">
+        <button class="btn-primary" onclick="addOfficerType()">
+          新增幹部
+        </button>
+      </div>
+    </div>
+
+    <div id="officerTypeList"></div>
+
+    <hr style="margin:25px 0;">
+
+    <!-- 密碼重設 -->
+    <h3 style="margin-bottom:12px;">管理者密碼設定</h3>
+
+    <div class="row">
+      <div class="col">
+        <input type="password" id="newPassword" placeholder="輸入新密碼">
+      </div>
+
+      <div class="col">
+        <button class="btn-danger" onclick="resetPassword()">
+          重設密碼
+        </button>
+      </div>
+    </div>
+
+    <hr style="margin:25px 0;">
+
+    <!-- 匯出 -->
+    <h3 style="margin-bottom:12px;">資料匯出</h3>
+
+    <button class="btn-success" onclick="exportAllData()">
+      匯出全部資料到 Google 試算表
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+
+  /* =========================
+      系統設定
+  ========================= */
+
+  let adminPassword = "Tn20081210";
+
+  let gradeSettings = [
+    { grade:"1", classCount:8 },
+    { grade:"2", classCount:8 },
+    { grade:"3", classCount:8 }
+  ];
+
+  let officerTypes = [
+    "班長",
+    "副班長",
+    "學藝股長",
+    "風紀股長",
+    "衛生股長"
+  ];
+
+  // Google Apps Script Web App URL
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzR9trYifbwAQc_PFpBW2Nbw2m0l9A8VEX-1MgJaIrt_wQiE6nqdf_WyvHKIpo-HLeEXg/exec";
+
+  /* =========================
+      初始化
+  ========================= */
+
+  function init(){
+
+    renderGradeOptions();
+    renderOfficerInputs();
+    renderOfficerTypeList();
+    renderGradeConfigs();
+
+  }
+
+  /* =========================
+      年級下拉
+  ========================= */
+
+  function renderGradeOptions(){
+
+    const gradeSelect = document.getElementById("gradeSelect");
+
+    gradeSelect.innerHTML =
+      `<option value="">請選擇年級</option>`;
+
+    gradeSettings.forEach(g => {
+
+      gradeSelect.innerHTML +=
+        `<option value="${g.grade}">
+          ${g.grade}年級
+        </option>`;
+
+    });
+
+  }
+
+  /* =========================
+      班級下拉
+  ========================= */
+
+  function renderClasses(){
+
+    const grade = document.getElementById("gradeSelect").value;
+    const classSelect = document.getElementById("classSelect");
+
+    classSelect.innerHTML =
+      `<option value="">請選擇班級</option>`;
+
+    const found = gradeSettings.find(g => g.grade === grade);
+
+    if(found){
+
+      for(let i=1; i<=found.classCount; i++){
+
+        let classNo = String(i).padStart(2,"0");
+
+        classSelect.innerHTML +=
+          `<option value="${classNo}">
+            ${classNo}班
+          </option>`;
+      }
+
+    }
+
+  }
+
+  /* =========================
+      幹部輸入區
+  ========================= */
+
+  function renderOfficerInputs(){
+
+    const container =
+      document.getElementById("officerContainer");
+
+    container.innerHTML = "";
+
+    officerTypes.forEach(type => {
+
+      container.innerHTML += `
+        <div class="officer-row">
+
+          <div class="officer-title">
+            ${type}
+          </div>
+
+          <div class="row">
+
+            <div class="col">
+              <label>座號</label>
+              <input type="number"
+                     id="seat_${type}"
+                     placeholder="請輸入座號">
+            </div>
+
+            <div class="col">
+              <label>姓名</label>
+              <input type="text"
+                     id="name_${type}"
+                     placeholder="請輸入姓名">
+            </div>
+
+          </div>
+
+        </div>
+      `;
+    });
+
+  }
+
+  /* =========================
+      檢視資料
+  ========================= */
+
+  function previewData(){
+
+    const grade =
+      document.getElementById("gradeSelect").value;
+
+    const classNo =
+      document.getElementById("classSelect").value;
+
+    if(!grade || !classNo){
+
+      alert("請先選擇年級與班級");
+      return;
+
+    }
+
+    let html = `
+      <table>
+        <tr>
+          <th>年級</th>
+          <th>班級</th>
+          <th>幹部</th>
+          <th>座號</th>
+          <th>姓名</th>
+        </tr>
+    `;
+
+    officerTypes.forEach(type => {
+
+      const seat =
+        document.getElementById(`seat_${type}`).value;
+
+      const name =
+        document.getElementById(`name_${type}`).value;
+
+      if(seat && name){
+
+        html += `
+          <tr>
+            <td>${grade}</td>
+            <td>${classNo}</td>
+            <td>${type}</td>
+            <td>${seat}</td>
+            <td>${name}</td>
+          </tr>
+        `;
+      }
+
+    });
+
+    html += `</table>`;
+
+    document.getElementById("previewArea").innerHTML =
+      html;
+
+  }
+
+  /* =========================
+      完成送出
+  ========================= */
+
+  async function submitData(){
+
+    const grade =
+      document.getElementById("gradeSelect").value;
+
+    const classNo =
+      document.getElementById("classSelect").value;
+
+    if(!grade || !classNo){
+
+      alert("請選擇年級與班級");
+      return;
+
+    }
+
+    let records = [];
+
+    for(let type of officerTypes){
+
+      const seat =
+        document.getElementById(`seat_${type}`).value;
+
+      const name =
+        document.getElementById(`name_${type}`).value;
+
+      if(!seat || !name){
+
+        alert(`${type}資料不可空白`);
+        return;
+
+      }
+
+      records.push({
+        grade: grade,
+        class: classNo,
+        officer: type,
+        seat: seat,
+        name: name
+      });
+
+    }
+
+    try{
+
+      await fetch(SCRIPT_URL,{
+
+        method:"POST",
+
+        body:JSON.stringify({
+          action:"save",
+          data:records
+        })
+
+      });
+
+      alert("資料已成功寫入 Google 試算表");
+
+    }catch(err){
+
+      console.error(err);
+      alert("資料送出失敗");
+
+    }
+
+  }
+
+  /* =========================
+      管理者登入
+  ========================= */
+
+  function showAdminLogin(){
+
+    const pwd =
+      prompt("請輸入管理者密碼");
+
+    if(pwd === adminPassword){
+
+      document
+        .getElementById("adminPanel")
+        .classList.remove("hidden");
+
+    }else{
+
+      alert("密碼錯誤");
+
+    }
+
+  }
+
+  /* =========================
+      新增幹部
+  ========================= */
+
+  function addOfficerType(){
+
+    const input =
+      document.getElementById("newOfficer");
+
+    const value = input.value.trim();
+
+    if(!value){
+
+      alert("請輸入幹部名稱");
+      return;
+
+    }
+
+    officerTypes.push(value);
+
+    input.value = "";
+
+    renderOfficerTypeList();
+    renderOfficerInputs();
+
+  }
+
+  /* =========================
+      幹部列表
+  ========================= */
+
+  function renderOfficerTypeList(){
+
+    const list =
+      document.getElementById("officerTypeList");
+
+    list.innerHTML = "";
+
+    officerTypes.forEach((type,index)=>{
+
+      list.innerHTML += `
+        <div class="admin-item">
+
+          <span class="badge">
+            ${type}
+          </span>
+
+          <button class="btn-danger"
+                  onclick="deleteOfficer(${index})">
+            刪除
+          </button>
+
+        </div>
+      `;
+    });
+
+  }
+
+  function deleteOfficer(index){
+
+    officerTypes.splice(index,1);
+
+    renderOfficerTypeList();
+    renderOfficerInputs();
+
+  }
+
+  /* =========================
+      年級設定
+  ========================= */
+
+  function renderGradeConfigs(){
+
+    const area =
+      document.getElementById("gradeConfig");
+
+    area.innerHTML = "";
+
+    gradeSettings.forEach((g,index)=>{
+
+      area.innerHTML += `
+        <div class="row">
+
+          <div class="col">
+            <input type="text"
+                   value="${g.grade}"
+                   onchange="gradeSettings[${index}].grade=this.value">
+          </div>
+
+          <div class="col">
+            <input type="number"
+                   value="${g.classCount}"
+                   onchange="gradeSettings[${index}].classCount=this.value">
+          </div>
+
+        </div>
+      `;
+    });
+
+  }
+
+  function addGradeConfig(){
+
+    gradeSettings.push({
+      grade:"",
+      classCount:1
+    });
+
+    renderGradeConfigs();
+    renderGradeOptions();
+
+  }
+
+  /* =========================
+      密碼重設
+  ========================= */
+
+  function resetPassword(){
+
+    const newPwd =
+      document.getElementById("newPassword").value;
+
+    if(!newPwd){
+
+      alert("請輸入新密碼");
+      return;
+
+    }
+
+    adminPassword = newPwd;
+
+    alert("密碼已更新");
+
+  }
+
+  /* =========================
+      匯出全部資料
+  ========================= */
+
+  async function exportAllData(){
+
+    try{
+
+      await fetch(SCRIPT_URL,{
+
+        method:"POST",
+
+        body:JSON.stringify({
+          action:"export"
+        })
+
+      });
+
+      alert("資料已匯出");
+
+    }catch(err){
+
+      console.error(err);
+      alert("匯出失敗");
+
+    }
+
+  }
+
+  init();
+
+</script>
+
+</body>
+</html>
